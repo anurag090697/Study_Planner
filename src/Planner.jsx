@@ -6,6 +6,7 @@ function Plans() {
   let [subName, setSub] = useState("");
   let [taskTime, setTime] = useState(0);
   let [allSub, setAll] = useState([]);
+
   function setSchedule(e) {
     e.preventDefault();
     let tmp = [...allSub];
@@ -14,18 +15,31 @@ function Plans() {
       time: parseInt(taskTime),
     });
     setAll(tmp);
-    console.log(allSub);
+    // console.log(allSub);
+    setSub("");
   }
+
   function increaseHour(idx) {
     let tmArr = [...allSub];
     tmArr[idx].time++;
     setAll(tmArr);
   }
+
   function decreaseHour(idx) {
     let tmArr = [...allSub];
     if (tmArr[idx].time > 0) tmArr[idx].time--;
     setAll(tmArr);
   }
+
+  function removeSub(idx) {
+    let tmArr = [];
+    allSub.forEach((ele, index) => {
+      if (idx !== index) tmArr.push(ele);
+    });
+    setAll(tmArr);
+    if (tmArr.length < 1) localStorage.removeItem("arrayre");
+  }
+
   useEffect(() => {
     if (allSub.length > 0) {
       localStorage.setItem("arrayre", JSON.stringify(allSub));
@@ -78,21 +92,27 @@ function Plans() {
       {allSub.map((ele, index) => (
         <div
           key={index}
-          className='select-none grid-cols-4 grid gap-4 items-center mx-auto w-fit my-6 text-center font-medium'
+          className='select-none grid-cols-5  grid gap-3 items-center mx-auto w-fit my-6 text-center font-medium'
         >
           <p className='bg-cyan-500 rounded-xl p-1'>{ele.Subject}</p>
           <button
-            className='font-black rounded-full bg-red-600 w-8 h-8 hover:bg-pink-700 hover:text-white'
+            className='font-black rounded-full bg-red-600 w-8 h-8 hover:bg-pink-700 hover:text-white ml-2'
             onClick={() => decreaseHour(index)}
           >
             -
           </button>
           <p className='bg-indigo-500 rounded-xl p-1'>{ele.time}-Hours</p>
           <button
-            className='rounded-full bg-green-600 w-8 h-8 hover:bg-lime-600 hover:text-white font-black'
+            className='rounded-full bg-green-600 w-8 h-8 hover:bg-lime-600 hover:text-white font-black ml-5'
             onClick={() => increaseHour(index)}
           >
             +
+          </button>
+          <button
+            className='rounded-full bg-yellow-600 hover:bg-yellow-400 hover:text-white font-black ml-5 p-2'
+            onClick={() => removeSub(index)}
+          >
+            Done
           </button>
         </div>
       ))}
